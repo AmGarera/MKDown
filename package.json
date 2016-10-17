@@ -102,7 +102,9 @@
     "standard": "^8"
   },
   "dependencies": {
+    "jquery": "^3.1.1",
     "markdown-it": "^8.0.0",
-    "marked": "^0.3.6"
+    "marked": "^0.3.6",
+    "materialize-css": "^0.97.7"
   }
 }
