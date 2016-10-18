@@ -16,7 +16,10 @@
     "devtron": "^1",
     "electron-debug": "^1",
     "electron-is-dev": "^0.1",
-    "lodash": "^4"
+    "jquery": "^3.1.1",
+    "lodash": "^4",
+    "materialize-css": "^0.97.7",
+    "standard": "^8.4.0"
   },
   "config": {
     "url": "index.html",

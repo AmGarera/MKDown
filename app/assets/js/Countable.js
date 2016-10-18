@@ -27,7 +27,7 @@
    */
 
   var _liveElements = [],
-      _event = 'oninput' in document ? 'input' : 'keyup'
+    _event = 'oninput' in document ? 'input' : 'keyup'
 
   /**
    * IE9 is a special case. It does not fire an 'input' event when
@@ -77,9 +77,9 @@
 
   function _decode (string) {
     var output = [],
-        counter = 0,
-        length = string.length,
-        value, extra
+      counter = 0,
+      length = string.length,
+      value, extra
 
     while (counter < length) {
       value = string.charCodeAt(counter++)
@@ -122,8 +122,8 @@
 
   function _validateArguments (elements, callback) {
     var nodes = Object.prototype.toString.call(elements),
-        elementsValid = elements && (((nodes === '[object NodeList]' || nodes === '[object HTMLCollection]') && elements.length) || (elements.nodeType === 1)),
-        callbackValid = callback && typeof callback === 'function'
+      elementsValid = elements && (((nodes === '[object NodeList]' || nodes === '[object HTMLCollection]') && elements.length) || (elements.nodeType === 1)),
+      callbackValid = callback && typeof callback === 'function'
 
     if ('console' in window && 'warn' in console) {
       if (!elementsValid) console.warn('Countable: No valid elements were found')
@@ -186,7 +186,7 @@
 
   function _count (element, options) {
     var original = '' + ('value' in element ? element.value : element.innerText || element.textContent),
-        trimmed
+      trimmed
 
     /**
      * The initial implementation to allow for HTML tags stripping was created
@@ -272,21 +272,21 @@
 
     live: function (elements, callback, options) {
       var ops = _extendDefaults(options),
-          bind = function (element) {
-            var handler = function () {
-                  callback.call(element, _count(element, ops))
-                }
-
-            _liveElements.push({ element: element, handler: handler })
-
-            handler()
-
-            if (element.addEventListener) {
-              element.addEventListener(_event, handler, false)
-            } else if (element.attachEvent) {
-              element.attachEvent('on' + _event, handler)
-            }
+        bind = function (element) {
+          var handler = function () {
+            callback.call(element, _count(element, ops))
           }
+
+          _liveElements.push({ element: element, handler: handler })
+
+          handler()
+
+          if (element.addEventListener) {
+            element.addEventListener(_event, handler, false)
+          } else if (element.attachEvent) {
+            element.attachEvent('on' + _event, handler)
+          }
+        }
 
       if (!_validateArguments(elements, callback)) return
 
@@ -405,4 +405,4 @@
   } else {
     global.Countable = Countable
   }
-}(this));
+}(this))
