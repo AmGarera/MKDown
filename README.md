@@ -1,290 +1,142 @@
-# SkelEktron
+electron-boilerplate
+==============
 
-An unofficial [Electron](http://electron.atom.io) Application template.
+[![Build Status](https://travis-ci.org/szwacz/electron-boilerplate.svg?branch=master)](https://travis-ci.org/szwacz/electron-boilerplate) [![Build status](https://ci.appveyor.com/api/projects/status/s9htc1k5ojkn08fr?svg=true)](https://ci.appveyor.com/project/szwacz/electron-boilerplate)
 
-SkelEktron was born to be a scratchpad application. A kitchen sink forked from the [Quick Start][electron-quick-start] app, where I could test code and ideas for another existing Electron project without messing the original source code. It eventually took its own road as a template application, a blueprint that provides common features and lets you concentrate on your application's specific code.
+Minimalistic yet comprehensive boilerplate application for [Electron runtime](http://electron.atom.io). Tested on OSX, Windows and Linux.  
 
-## Core Features
+This project does not impose on you any framework (like Angular or React). Tries to give you only the 'electron' part of technology stack so you can pick your favorite tools for the rest.
 
- - A smart cross-platform logger
- - A ready-to-go auto updater
- - Built-in support for [Electron Builder][electron-builder]
- - Built-in support for different _build targets_ (ie. release, debug, test, etc) with different settings
- - A printer management feature (optional, fully supported on 64bit Mac/Linux)
+# Quick start
+The only development dependency of this project is [Node.js](https://nodejs.org). So just make sure you have it installed.
+Then type few commands known to every Node developer...
+```
+git clone https://github.com/szwacz/electron-boilerplate.git
+cd electron-boilerplate
+npm install
+npm start
+```
+... and boom! You have running desktop application on your screen.
 
-### Logger
+# Structure of the project
 
-SkelEktron's logger is a simple `console.*` redirector. During development all the output is written to the terminal. When the application is packaged the output is redirected to a file:
+## Declaring dependencies
 
- - OSX applications log to `~/Library/Logs/YourAppNameWithoutSpaces.log`
- - Windows applications log to `C:\Users\[UserName]\AppData\Local\YourAppNameWithoutSpaces.log` (it also works when the app is packaged but not yet installed)
- - Linux applications log to `~/.YourAppNameWithoutSpaces.log`
+There are **two** `package.json` files:
 
-In other operating systems the output is still redirected to `STDOUT` or `STDERR`, but it can be easily modified in `lib/log.js`.
+#### 1. `package.json` for development
+Sits on path: `electron-boilerplate/package.json`. Here you declare dependencies for your development environment and build scripts. **This file is not distributed with real application!**
 
-The logger also adds the `console.debug()` method, which is silenced when the application is built in "release" mode (the default).
-
-**Note**: the log file is truncated each time the application starts. If you need to keep the log files, you have to modify the related write stream to use an `a` or `a+` flags.
-
-**Tip**: on Windows PowerShell you can tail the log file with the command:
-
-~~~ console
-PS C:\src\skelektron> Get-Content -Path "C:\Users\[UserName]\AppData\Local\YourAppNameWithoutSpaces.log" -Wait
-~~~
-
-### Auto Update
-
-SkelEktron provides an ready-to-go auto update feature for Win and Mac applications, compatible with [Electron Release Server][ers]. The application checks for updates at startup and downloads the package automatically. Once the update is downloaded, the user is prompted to update the application instantly or at the next restart.
-
-To enable the updates, you just need to set up your server (see below) and configure the update URL into `app/package.json`:
-
-~~~ json
-"config": {
-  "update": {
-    "url": "http://myapp.myerserver.com/update/"
-  }
+Also here you declare the version of Electron runtime you want to use:
+```json
+"devDependencies": {
+  "electron": "1.3.3"
 }
-~~~
+```
+Note: [Electron authors advise](http://electron.atom.io/docs/tutorial/electron-versioning/) to use fixed version here.
 
-If the value is not set or is set to `false`, the feature is disabled.
+#### 2. `package.json` for your application
+Sits on path: `electron-boilerplate/app/package.json`. This is **real** manifest of your application. Declare your app dependencies here.
 
-### Printers management
+#### OMG, but seriously why there are two `package.json`?
+1. Native npm modules (those written in C, not JavaScript) need to be compiled, and here we have two different compilation targets for them. Those used in application need to be compiled against electron runtime, and all `devDependencies` need to be compiled against your locally installed node.js. Thanks to having two files this is trivial.
+2. When you package the app for distribution there is no need to add up to size of the app with your `devDependencies`. Here those are always not included (reside outside the `app` directory).
 
-With the [printer][printer] module the application has access to the printers list and can send data directly to the chosen printer. The current implementation prints test pages in PDF or TXT format. For your specific implementations you can have a look at [the examples][printer-examples].
+## Folders for application code
 
-**Please Note**: since very few apps would need printing ability, and it's not fully supported in Windows, printer management has been disabled by default. To enable the library:
+The application is split between two main folders...
 
- - add the [printer][printer] in `app/package.json`,
- - uncomment and customize `require('./lib/printer')` in `main.js`,
- - add and customize `require('./assets/js/printers.js')` to your HTML views.
+`src` - this folder is intended for files which need to be transpiled or compiled (files which can't be used directly by electron).
 
-### Electron Builder support
+`app` - contains all static assets (put here images, css, html etc.) which don't need any pre-processing.
 
-SkelEktron comes pre-packaged and configured for [Electron Builder][electron-builder] with a **two** `package.json` files structure. Build settings can be customized in development `package.json`, you can find more details in the [wiki][electron-builder-wiki].
+Build process compiles all stuff from `src` folder and puts it into `app` folder, so after finished build `app` contains full, runnable application.
 
-### Targeted builds
+Treat `src` and `app` folders like two halves of one bigger thing.
 
-Sometimes you need to build different versions of your application, for example for releasing it to the public, for testing, for QA, etc. And each of these targets could require different settings (i.e. URL to load, debug enabled/disabled).
+Drawback of this design is that `app` folder contains some files which should be git-ignored and some which should not (see `.gitignore` file). But thanks to this two-folders split development builds are much (much!) faster.
 
-Each target is a JSON file stored in `build/targets`, so you can have as many targets you need. The content of the selected file is merged with the `config` object loaded from `app/package.json`, allowing you to override default settings such as debug or update URL.
+# Development
 
-The default build target is "release", which builds a production version of the application with developer and debug tools disabled. You can build other targets by setting the `BUILD_TARGET` env var.
+### Installation
 
-~~~ console
-$ BUILD_TARGET=debug npm run build:osx
-~~~
+```
+npm install
+```
+It will also download Electron runtime, and install dependencies for second `package.json` file inside `app` folder.
 
-### Global settings
+### Starting the app
 
-Once config is loaded from `app/package.json`, the `global.appSettings` variable is available to all backend modules, in frontend modules you can use `require('remote').getGlobal('appSettings').someProperty`.
+```
+npm start
+```
 
-### Other goodies
+### Adding npm modules to your app
 
-SkelEktron comes pre-packaged with other useful tools like `pre-comit`, [Devtron][devtron], and scripts for running tests and code coverage with [Spectron][spectron], [Mocha][mocha]/[Chai][chai] and [Istanbul][istanbul].
+Remember to add your dependency to `app/package.json` file, so do:
+```
+cd app
+npm install name_of_npm_module --save
+```
 
-Be sure to check out the [Electron API Demos][electron-api-demos] for more goodies!
+### Working with modules
 
-## Build/Update Workflow
+Thanks to [rollup](https://github.com/rollup/rollup) you can (and should) use ES6 modules for all code in `src` folder. But because ES6 modules still aren't natively supported you can't use it in the `app` folder.
 
-A suitable build flow can be:
+So for file in `src` folder do this:
+```js
+import myStuff from './my_lib/my_stuff';
+```
 
- - Version bump in `app/package.json`
- - Run `build` command for specific targets (dev/test/qa/release) platforms
- - Publish the packages
-   * create the remote release(s) for target and platform
-   * upload the assets
+But in file in `app` folder the same line must look as follows:
+```js
+var myStuff = require('./my_lib/my_stuff');
+```
 
-### Build Notes
+# Testing
 
-Although theoretically you can cross-build all platform versions of your app on a single operating system, I've found that building each release on the target OS, using VMs obviously, works best for me.
+### Unit tests
 
-I use both node v4, v5 and v6.5.
+Using [electron-mocha](https://github.com/jprichardson/electron-mocha) test runner with the [chai](http://chaijs.com/api/assert/) assertion library. To run the tests go with standard:
+```
+npm test
+```
+Test task searches for all files in `src` directory which respect pattern `*.spec.js`.
 
-For Windows builds I use an official [Windows 10 development VM][win10dev] from Microsoft. You just need to install Python, Node and Git.
+### End to end tests
 
-Sometimes I need a 32bit Windows 7 box, in those cases I use a [basic VM][win7dev] with [MS Visual C++ 2010 Redistributable Package (x86)][msvcpp] (when I don't need compile power) or the full [Visual Studio][vs2015], along with Node, Python and Git.
+Using [mocha](https://mochajs.org/) test runner and [spectron](http://electron.atom.io/spectron/). Run with command:
+```
+npm run e2e
+```
+The task searches for all files in `e2e` directory which respect pattern `*.e2e.js`.
 
-**Note**: the `author.name` field from `app/package.json` is used by Squirrel as a path component for the shortcut menu icon, so double-check it for any special characters not allowed in Windows paths.
+### Code coverage
 
-I often build `.deb` packages from OS X, with `fpm` and GraphicsMagick (`brew install GraphicsMagick`) installed. Please check [fpm repo][fpm] for installation instructions.
+Using [istanbul](http://gotwarlost.github.io/istanbul/) code coverage tool. Run with command:
+```
+npm run coverage
+```
+You can set the reporter(s) by setting `ISTANBUL_REPORTERS` environment variable (defaults to `text-summary` and `html`). The report directory can be set with `ISTANBUL_REPORT_DIR` (defaults to `coverage`).
 
-Also Linux build may fail if GraphicsMagick does not find suitable sizes inside the app Icon. Required sizes are: 16x16x32, 32x32x32, 256x256x32, 512x512x32, 1024x1024x32.
+### Continuous integration
 
-For more detailed and updated information, you can check the official build instructions for [Linux][buildlinux], [OS X][buildmac] and [Windows][buildwin].
+Electron [can be plugged](https://github.com/atom/electron/blob/master/docs/tutorial/testing-on-headless-ci.md) into CI systems. Here two CIs are preconfigured for you. [Travis CI](https://travis-ci.org/) covers testing on OSX and Linux and [App Veyor](https://www.appveyor.com) on Windows.
 
-## How To Customize The Installers
+# Making a release
 
-You can configure custom parameters for your platform installers inside the development `package.json` of your project, for example (the osx icon parameter targets the mounted DMG icon):
+To package your app into an installer use command:
+```
+npm run release
+```
+It will start the packaging process for operating system you are running this command on. Ready for distribution file will be outputted to `dist` directory.
 
-~~~ json
-"build": {
-  "appId": "com.example.MyApp",
-  "productName": "MyApp",
-  "dmg": {
-    "icon": "build/mount.icns",
-    "background": "build/background.png",
-    "iconSize": 120,
-    "iconTextSize": 14,
-    "contents": [
-      {
-        "x": 478,
-        "y": 170,
-        "type": "link",
-        "path": "/Applications"
-      },
-      {
-        "x": 130,
-        "y": 170,
-        "type": "file"
-      }
-    ]
-  },
-  "mac": {
-    "category": "public.app-category.business"
-  },
-  "win": {
-    "icon": "build/icon.ico"
-  },
-  "squirrelWindows": {
-    "loadingGif": "build/splash.gif",
-    "iconUrl": "https://url/to/icon.ico",
-    "msi": false
-  }
-}
-~~~
+You can create Windows installer only when running on Windows, the same is true for Linux and OSX. So to generate all three installers you need all three operating systems.
 
-See the [builder options][builderoptions] guide for the full reference.
+All packaging actions are handled by [electron-builder](https://github.com/electron-userland/electron-builder). See docs of this tool if you want to customize something.
 
-## How To Sign The Installers
+**Note:** There are various icons and bitmap files in `resources` directory. Those are used in installers and intended to be replaced by your own graphics.
 
-In order to sign the installers you need to obtain 2 code-signing certificate in `*.p12` format: one for Windows and one for OSX. The certificate must be accessible from the building machine via HTTPS (ie. GDrive, Dropbox).
+# License
 
-Then on Windows PowerShell:
-
-~~~ console
-PS C:\src\skelektron> $env:CSC_LINK="https://url.to.my/certificate.p12"
-PS C:\src\skelektron> $env:CSC_KEY_PASSWORD="CertificatePassword"
-PS C:\src\skelektron> npm run build:win -- --sign
-~~~
-
-And from OSX Terminal:
-
-~~~ console
-$ export CSC_LINK="https://url.to.my/certificate.p12"
-$ export CSC_KEY_PASSWORD="CertificatePassword"
-$ npm run build:osx
-~~~
-
-Mac certificates are provided by Apple through XCode. To export a certificate in `p12` format [read this Apple doc][applecertdoc].
-
-## How To Setup an Electron Release Server on Heroku with MySQL, Redis and S3
-
-First checkout a copy of [Electron Release Server][ers] and configure it to use MySQL, Redis and [S3][ers-s3], then follow the instructions below.
-
-**Note**: if you prefer, you can use mLab MongoDB for session storage and Heroku Postgres as main database.
-
- 1. Setup an S3 bucket where
-    - everyone can read (EveryOne: list)
-    - a custom `yourAppUser`, with specific credentials can write
-    ~~~ json
-    {
-    	"Version": "2012-10-17",
-    	"Statement": [
-    		{
-    			"Sid": "",
-    			"Effect": "Allow",
-    			"Principal": {
-    				"AWS": "arn:aws:iam::XXXXXXXXXXXX:user/your_user"
-    			},
-    			"Action": "s3:*",
-    			"Resource": [
-    				"arn:aws:s3:::your-bucket",
-    				"arn:aws:s3:::your-bucket/*"
-    			]
-    		},
-    		{
-    			"Sid": "PublicReadGetObject",
-    			"Effect": "Allow",
-    			"Principal": "*",
-    			"Action": "s3:GetObject",
-    			"Resource": "arn:aws:s3:::your-bucket/*"
-    		}
-    	]
-    }
-    ~~~
-
- 2. Create an Heroku app (i.e. `your-electron.herokuapp.com`) using Heroku web UI or CLI tool
-
- 3. Configure Heroku add-ons
-    - [JawsDB][jawsdb] for MySQL main database
-    - [Heroku Redis][heroku-redis] for [session storage][salis-sessions]
-
- 4. Configure the environment vars for the app
-    - SITE_URL
-    - DATABASE_URL
-    - ADMIN_USERNAME
-    - ADMIN_PASSWORD
-    - S3_API_KEY
-    - S3_API_SECRET
-    - S3_BUCKET
-    - S3_REGION
-    - PORT
-    - REDIS_HOST
-    - REDIS_PASS
-    - REDIS_PORT
-
- 5. Import data into the app main database a tool of choice (Sequel for OSX, MySQL Workbench or other standard client)
-
- 6. Push the app to Heroku
-    - `git push heroku your-branch:master`
-
- 7. Enjoy it!
-
-## Running the Tests
-
-`npm test` will run both unit and integration tests (Spectron). To run each test separately use `npm run unit` and `npm run integration`.
-
-## Contributing
-
-See CONTRIBUTING file.
-
-## Credits
-
-The [Electron](http://electron.atom.io) and [Electron Builder][electron-builder] team. [Arek Sredzki](http://arek.io/) for [Electron Release Server][ers], Ion for [printer][printer]. [Marco Piraccini](https://github.com/marcopiraccini) and [Bogdan Rotund](https://github.com/Bogdan-Rotund).
-
-## Contributor Code of Conduct
-
-Please note that this project is released with a [Contributor Code of
-Conduct](http://contributor-covenant.org/). By participating in this project
-you agree to abide by its terms. See CODE_OF_CONDUCT file.
-
-## License
-
-SkelEktron is released under the MIT License. See the bundled LICENSE file for details.
-
-[ers]: https://github.com/ArekSredzki/electron-release-server
-[printer]: https://www.npmjs.com/package/printer
-[printer-examples]: https://github.com/tojocky/node-printer/tree/master/examples
-[electron-builder]: https://www.npmjs.com/package/electron-builder
-[electron-builder-wiki]: https://github.com/electron-userland/electron-builder/wiki
-[devtron]: http://electron.atom.io/devtron/
-[spectron]: http://electron.atom.io/spectron/
-[istanbul]: https://www.npmjs.com/package/istanbul
-[mocha]: https://www.npmjs.com/package/mocha
-[chai]: https://www.npmjs.com/package/chai
-[electron-quick-start]: https://github.com/electron/electron-quick-start
-[electron-api-demos]: https://github.com/electron/electron-api-demos
-[win10dev]: https://developer.microsoft.com/en-us/windows/downloads/virtual-machines
-[win7dev]: https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/windows/
-[msvcpp]: https://www.microsoft.com/en-us/download/details.aspx?id=5555
-[vs2015]: https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
-[buildlinux]: http://electron.atom.io/docs/development/build-instructions-linux/
-[buildmac]: http://electron.atom.io/docs/development/build-instructions-osx/
-[buildwin]: http://electron.atom.io/docs/development/build-instructions-windows/
-[builderoptions]: https://github.com/electron-userland/electron-builder/wiki/Options
-[applecertdoc]: https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingCertificates/MaintainingCertificates.html#//apple_ref/doc/uid/TP40012582-CH31-SW7
-[fpm]: https://github.com/jordansissel/fpm
-[ers-s3]: https://github.com/ArekSredzki/electron-release-server/issues/15
-[sails-session]: http://sailsjs.org/documentation/reference/configuration/sails-config-session
-[jawsdb]: https://elements.heroku.com/addons/jawsdb
-[heroku-redis]: https://elements.heroku.com/addons/heroku-redis
+Released under the MIT license.
