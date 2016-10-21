@@ -1,27 +1,49 @@
-<!doctype html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>MKDown</title>
 
-    <link rel="stylesheet" href="assets/css/app.css">
+    <!--<link rel="stylesheet" href="assets/css/app.css">-->
 
     <!--<script src="node_modules/materialize-css/node_modules/jquery/dist/jquery.js"></script>-->
 
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
     <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.css">
 
 </head>
 <body>
 
+<!-- Insert this line above script imports  -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+<script src="app.bundle.js"></script>
 <!--THIS CALLS JQUERY PLEASE ONLY REPLACE ↓ WITH A LOCAL OR CDN COPY DEPENDING ON YOUR NEEDS-->
-<script type="text/javascript" src="node_modules/jquery/dist/jquery.js"
+<script type="text/javascript" src="node_modules/jquery/src/jquery.js"
         onload="window.$ = window.jQuery = module.exports;"></script>
 <!--THIS IS THE END OF THE MAGICAL JQUERY CODE DO NOT TOUCH UNLESS YOU'RE DOING WHAT IS ALLOWED-->
 <!--THANKS-->
-<script src="node_modules/marked/marked.min.js"></script>
 <script src="node_modules/materialize-css/dist/js/materialize.js"></script>
+<script src="node_modules/marked/marked.min.js"></script>
 <script src="node_modules/countable/Countable.js"></script>
-<script src="node_modules/hammerjs/hammer.js"></script>
+<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
+
+<!-- Modal Trigger -->
+<a class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <h4>Modal Header</h4>
+        <p>A bunch of text</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="col s12 m6">
@@ -61,6 +83,8 @@
 
 <div>
 </div>
+
+
 <!--Super Bowl Party Preview-->
 <div id="content"></div>
 <!--Markdown Rendering and WordCount functions-->
