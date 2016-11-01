@@ -48,7 +48,7 @@
 
 
 <!-- Modal Trigger -->
-<a class="waves-effect waves-light btn btn--primary mr1 js-tingle-modal-1" href="#modal-text">Modal</a>
+<!--<a class="waves-effect waves-light btn btn&#45;&#45;primary mr1 js-tingle-modal-1" href="#modal-text">Modal</a>-->
 
 <!-- Modal Structure -->
 <section class="modal--show" id="modal-text" tabindex="-1"
@@ -56,12 +56,76 @@
 
     <div class="modal-inner">
         <header id="modal-label"><h1>Cheat Sheet</h1><!-- Header --></header>
-        <div class="modal-content"><p><i>In this example I show you how I work!</i></p><!-- The modals content --></div>
-        <footer><!-- Footer --></footer>
+        <div class="modal-content">
+            <!--Header-->
+            <ul class="collection with-header">
+                <li class="collection-header"><h4>Header Tags</h4></li>
+                <li class="collection-item"># h1</li>
+                <li class="collection-item">## h2</li>
+                <li class="collection-item">### h3</li>
+                <li class="collection-item">#### h4</li>
+            </ul>
+
+            <!--Emphasis-->
+            <ul class="collection with-header">
+                <li class="collection-header"><h4>Emphasis</h4></li>
+                <li class="collection-item">*italics*</li>
+                <li class="collection-item">**bold**</li>
+            </ul>
+
+            <!--List-->
+            <ul class="collection with-header">
+                <li class="collection-header"><h4>List</h4></li>
+                <li class="collection-item">1. First ordered list item</li>
+                <li class="collection-item">(indent)* Unordered sub-list.</li>
+                <li class="collection-item">(indent)1. Ordered sub-list</li>
+            </ul>
+
+            <!--Links-->
+            <ul class="collection with-header">
+                <li class="collection-header"><h4>Links</h4></li>
+                <li class="collection-item">[Inline-style link](https://www.google.com)</li>
+                <li class="collection-item">http://www.example.com</li>
+                <li class="collection-item">(indent)1. Ordered sub-list</li>
+            </ul>
+
+            <!--Code-->
+            <ul class="collection with-header">
+                <li class="collection-header"><h4>Code</h4></li>
+                <li class="collection-item">`code`</li>
+            </ul>
+
+            <!--Tables-->
+            <ul class="collection with-header">
+                <li class="collection-header"><h4>Tables</h4></li>
+                <li class="collection-item">
+                    <div>
+                        Pretty</br>
+                        | Tables        | Are           | Cool  |</br>
+                        | ------------- |:-------------:| -----:|</br>
+                        | col 3 is      | right-aligned | $1600 |</br>
+                        | col 2 is      | centered      |   $12 |</br>
+                        | zebra stripes | are neat      |    $1 |</br>
+                    </div>
+                </li>
+                <li class="collection-item">
+                    <div>
+                        Basic</br>
+                        Markdown | Less | Pretty<br>
+                        --- | --- | ---<br>
+                        *Still* | `renders` | **nicely**<br>
+                        1 | 2 | 3<br>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <footer>
+            <a class="waves-effect waves-teal btn-flat modal-close">Button</a>
+        </footer>
     </div>
 
-    <a href="#" class="modal-close" title="Close this modal" data-close="Close"
-       data-dismiss="modal">?</a>
+    <!--<a href="#" class="modal-close" title="Close this modal" data-close="Close"-->
+       <!--data-dismiss="modal">?</a>-->
 </section>
 
 <div class="row">
@@ -75,7 +139,8 @@
             </div>
             <div class="card-action">
                 <a href="#">Save</a>
-                <a href="#">Cheat Sheet</a>
+                <a href="#">Save & Export</a>
+                <a class="waves-effect waves-light mr1 js-tingle-modal-1" href="#modal-text">Cheat Sheet</a>
             </div>
         </div>
     </div>
